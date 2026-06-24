@@ -20,9 +20,20 @@ const FeatureImportanceChart: React.FC = () => {
         }
         const json = await response.json();
         
+        const nameMap: Record<string, string> = {
+          'MedInc': 'Income',
+          'HouseAge': 'House Age',
+          'AveRooms': 'Rooms',
+          'AveBedrms': 'Bedrooms',
+          'Population': 'Population',
+          'AveOccup': 'Occupancy',
+          'Latitude': 'Latitude',
+          'Longitude': 'Longitude'
+        };
+
         // Convert dict to array, sort descending, take top 5
         const importances: FeatureImportance[] = Object.keys(json).map(key => ({
-          name: key,
+          name: nameMap[key] || key,
           importance: json[key]
         }));
         importances.sort((a, b) => b.importance - a.importance);
