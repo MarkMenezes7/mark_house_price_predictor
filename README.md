@@ -55,6 +55,3 @@ npm install
 npm run dev
 ```
 The frontend will be available at `http://localhost:5173`.
-
-## Educational Notice
-Predictions are based on the 1990 California census data (from the scikit-learn dataset) and are intended for educational and demonstration purposes only.
