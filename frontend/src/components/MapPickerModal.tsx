@@ -123,7 +123,7 @@ const MapPickerModal: React.FC<MapPickerModalProps> = ({ initialLat, initialLng,
 
         <div style={{ height: '500px', width: '100%' }}>
           <MapContainer 
-            center={[36.7783, -119.4179]} 
+            center={[initialLat, initialLng]} 
             zoom={6} 
             minZoom={5} 
             maxZoom={12}

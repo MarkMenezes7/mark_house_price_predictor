@@ -1,7 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, Component, ReactNode } from 'react';
 import HeroSection from './components/HeroSection';
 import PredictionForm, { type PredictionData } from './components/PredictionForm';
 import ResultCard from './components/ResultCard';
+
+class ErrorBoundary extends Component<{children: ReactNode}, {hasError: boolean, error: Error | null}> {
+  constructor(props: {children: ReactNode}) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--error)' }}>
+          <h2>Something went wrong.</h2>
+          <p>{this.state.error?.message}</p>
+          <button onClick={() => window.location.reload()} style={{ padding: '0.5rem 1rem', marginTop: '1rem' }}>Reload App</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const App: React.FC = () => {
   const [prediction, setPrediction] = useState<number | null>(null);
@@ -14,7 +36,8 @@ const App: React.FC = () => {
     setPrediction(null);
 
     try {
-      const response = await fetch('http://localhost:8000/predict', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/predict`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,7 +66,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <>
+    <ErrorBoundary>
       <HeroSection />
       
       <main style={{ padding: '0 1rem', paddingBottom: '4rem' }}>
@@ -68,7 +91,7 @@ const App: React.FC = () => {
           <ResultCard prediction={prediction} />
         )}
       </main>
-    </>
+    </ErrorBoundary>
   );
 };
 

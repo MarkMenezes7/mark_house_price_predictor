@@ -13,7 +13,8 @@ const FeatureImportanceChart: React.FC = () => {
   useEffect(() => {
     const fetchImportances = async () => {
       try {
-        const response = await fetch('http://localhost:8000/feature-importance');
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        const response = await fetch(`${apiUrl}/feature-importance`);
         if (!response.ok) {
           throw new Error('Failed to fetch feature importances');
         }
@@ -36,7 +37,7 @@ const FeatureImportanceChart: React.FC = () => {
   }, []);
 
   if (error) {
-    return <div style={{ color: 'var(--error)', fontSize: '0.9rem' }}>Error loading chart: {error}</div>;
+    return null; // Gracefully degrade by hiding the chart if data cannot be loaded
   }
 
   if (data.length === 0) {

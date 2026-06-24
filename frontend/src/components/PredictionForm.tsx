@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import MapPickerModal from './MapPickerModal';
 
 export interface PredictionData {
-  MedInc: number;
-  HouseAge: number;
-  AveRooms: number;
-  AveBedrms: number;
-  Population: number;
-  AveOccup: number;
-  Latitude: number;
-  Longitude: number;
+  MedInc: number | '';
+  HouseAge: number | '';
+  AveRooms: number | '';
+  AveBedrms: number | '';
+  Population: number | '';
+  AveOccup: number | '';
+  Latitude: number | '';
+  Longitude: number | '';
 }
 
 interface PredictionFormProps {
@@ -44,7 +44,8 @@ const PredictionForm: React.FC<PredictionFormProps> = ({ onSubmit, isLoading }) 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isMapOpen, setIsMapOpen] = useState(false);
 
-  const validateField = (name: keyof PredictionData, value: number) => {
+  const validateField = (name: keyof PredictionData, value: number | '') => {
+    if (value === '') return 'Value is required';
     const range = RANGES[name];
     if (value < range.min || value > range.max) {
       return `Must be between ${range.min} and ${range.max}`;
@@ -53,10 +54,15 @@ const PredictionForm: React.FC<PredictionFormProps> = ({ onSubmit, isLoading }) 
   };
 
   const handleInputChange = (name: keyof PredictionData, valueStr: string) => {
+    if (valueStr === '') {
+      setFormData(prev => ({ ...prev, [name]: '' }));
+      setErrors(prev => ({ ...prev, [name]: 'Value is required' }));
+      return;
+    }
     const value = parseFloat(valueStr);
     
     // We update the state even if it's NaN temporarily to allow typing
-    setFormData(prev => ({ ...prev, [name]: isNaN(value) ? 0 : value }));
+    setFormData(prev => ({ ...prev, [name]: isNaN(value) ? '' : value }));
     
     if (!isNaN(value)) {
       setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
@@ -82,7 +88,8 @@ const PredictionForm: React.FC<PredictionFormProps> = ({ onSubmit, isLoading }) 
     setErrors(newErrors);
     
     if (isValid) {
-      onSubmit(formData);
+      // Cast the form data as strict numbers since we validated it
+      onSubmit(formData as Record<keyof PredictionData, number>);
     }
   };
 
@@ -96,7 +103,7 @@ const PredictionForm: React.FC<PredictionFormProps> = ({ onSubmit, isLoading }) 
     return (
       <div key={key} style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <label style={{ fontWeight: 600, color: 'var(--text-heading)' }}>{range.label}</label>
+          <label htmlFor={`input-${key}`} style={{ fontWeight: 600, color: 'var(--text-heading)' }}>{range.label}</label>
         </div>
         
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -110,6 +117,7 @@ const PredictionForm: React.FC<PredictionFormProps> = ({ onSubmit, isLoading }) 
             style={{ flex: 1, accentColor: 'var(--primary)' }}
           />
           <input 
+            id={`input-${key}`}
             type="number"
             min={range.min} 
             max={range.max} 
@@ -219,8 +227,8 @@ const PredictionForm: React.FC<PredictionFormProps> = ({ onSubmit, isLoading }) 
 
       {isMapOpen && (
         <MapPickerModal 
-          initialLat={formData.Latitude} 
-          initialLng={formData.Longitude}
+          initialLat={Number(formData.Latitude) || 35.63} 
+          initialLng={Number(formData.Longitude) || -119.57}
           onClose={() => setIsMapOpen(false)}
           onConfirm={(lat, lng) => {
             handleInputChange('Latitude', lat.toFixed(2));
