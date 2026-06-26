@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
+import React, { useState, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 
 // Fix Leaflet marker icon bug
@@ -36,8 +36,6 @@ const CALIFORNIA_BOUNDS = L.latLngBounds(
 );
 
 function MapController({ position, setPosition }: { position: L.LatLng, setPosition: (pos: L.LatLng) => void }) {
-  const map = useMap();
-
   useMapEvents({
     click(e) {
       if (CALIFORNIA_BOUNDS.contains(e.latlng)) {

@@ -1,4 +1,4 @@
-import React, { useState, Component, ReactNode } from 'react';
+import React, { useState, Component, type ReactNode } from 'react';
 import HeroSection from './components/HeroSection';
 import PredictionForm, { type PredictionData } from './components/PredictionForm';
 import ResultCard from './components/ResultCard';

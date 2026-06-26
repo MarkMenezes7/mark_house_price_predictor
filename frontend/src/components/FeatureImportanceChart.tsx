@@ -68,7 +68,7 @@ const FeatureImportanceChart: React.FC = () => {
           <XAxis type="number" hide />
           <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-hint)', fontSize: 12 }} width={80} />
           <Tooltip 
-            formatter={(value: number) => value.toFixed(4)}
+            formatter={(value: any) => `${(Number(value) * 100).toFixed(1)}%`}
             contentStyle={{ borderRadius: '8px', border: '1px solid var(--border)', boxShadow: 'var(--shadow)' }}
           />
           <Bar dataKey="importance" fill="var(--primary)" radius={[0, 4, 4, 0]} barSize={20} />
